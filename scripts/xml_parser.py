@@ -75,7 +75,8 @@ with open(out_tsv, 'wt') as out_tsv:
                 if "|" in Hit_id:
                   Hit_id = Hit_id.split('|')[1]
               if child_4.tag == "Hit_def":
-                Hit_species = re.sub(r']', '', re.sub(r'.*\[', '', child_4.text))
+                Hit_def = re.sub(' >.*', '', child_4.text)
+                Hit_species = re.sub(r']', '', re.sub(r'.*\[', '', Hit_def))
               if child_4.tag == "Hit_accession":
                 Hit_accession = child_4.text
               for hsp in child_4:
@@ -110,7 +111,7 @@ with open(out_tsv, 'wt') as out_tsv:
                 perc_iden = round(100*(int(Hsp_identity)/int(Hsp_align_len)),3)
                 perc_iden = f'{perc_iden:.3f}'
                 mismatch = Hsp_midline.count(" ") + Hsp_midline.count("+") - Hsp_hseq.count("-") - Hsp_qseq.count("-")
-                tsv_writer.writerow([Iteration_query_ID, Hit_id, perc_iden, Hsp_align_len, mismatch, Hsp_gaps, Hsp_query_from, Hsp_query_to, Hsp_hit_from, Hsp_hit_to, Hsp_evalue, Hsp_bit_score, Hit_species, iteration])
+                tsv_writer.writerow([Iteration_query_ID, Hit_id, perc_iden, Hsp_align_len, mismatch, Hsp_gaps, Hsp_query_from, Hsp_query_to, Hsp_hit_from, Hsp_hit_to, Hsp_evalue, Hsp_bit_score, Hit_species, iteration, Hit_def])
                 if Trim is True:
                   if int(Hsp_query_from) <= args.start and int (Hsp_query_to) >= args.end:
                     o.write(re.sub(" ", "_", (">"+Hit_id+":"+Hsp_hit_from+"-"+Hsp_hit_to+"#"+Hit_species+"#Iteration "+iteration+'\n')))
