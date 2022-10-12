@@ -1,14 +1,11 @@
 #!/usr/bin/env python
 
 from Bio import AlignIO, SeqIO
-from Bio.Align import MultipleSeqAlignment
 import Bio.Align
-import Bio.SeqIO
-from Bio.Seq import Seq
-from Bio.SeqRecord import SeqRecord
 import os
-import re
+from re import sub
 import argparse
+from multiprocessing import Pool
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--in_seq', type=str, required=True,
@@ -16,7 +13,7 @@ parser.add_argument('-i', '--in_seq', type=str, required=True,
 args = parser.parse_args()
 
 # set variables
-subfamily = re.sub('.fasta', '', re.sub('.*/', '', args.in_seq))
+subfamily = sub('.fasta', '', sub('.*/', '', args.in_seq))
 out_path = "data/rearranged/"+subfamily
 alignment_in = AlignIO.read(args.in_seq, 'fasta')
 
@@ -37,11 +34,30 @@ if os.path.exists(out_path+'/fastas/') is False:
 if os.path.exists(out_path+'/new_pssms/') is False:
   os.makedirs(out_path+'/new_pssms/') 
 
-a = list(range(0,len(alignment_in)))
-for x in a:
-  print(alignment_in[x].id)
-  # set paths
-  pssm_in_path = out_path+'/pssms/'+alignment_in[x].id+".pssm"
-  new_pssm_out_path = out_path+'/new_pssms/'+alignment_in[x].id+".pssm"
-  xml_out_path = out_path+'/xml/'+alignment_in[x].id+".xml"
-  os.system('psiblast -in_pssm '+pssm_out_path+' -db /home/james/databases/nr/nr -out '+xml_out_path+' -num_threads 128 -num_iterations 3 -outfmt 5 -max_target_seqs 999999 -evalue 1e-5 -out_pssm '+new_pssm_out_path)
+# func to find paths
+def job_list(x, y):
+  pssm_in_path = x+'/pssms/'+y+".pssm"
+  new_pssm_out_path = x+'/new_pssms/'+y+".pssm"
+  xml_out_path = x+'/xml/'+y+".xml"
+  to_run = ([pssm_in_path, xml_out_path, new_pssm_out_path],)
+  return(to_run)
+
+# func to run psiblast
+def psiblast_p(paths):
+  print(sub('.pssm', '', sub('.*/', '', paths[0])))
+  os.system('psiblast -in_pssm '+paths[0]+' -db /home/james/databases/nr/nr -out '+paths[1]+' -num_threads 128 -num_iterations 3 -outfmt 5 -max_target_seqs 999999 -evalue 1e-5 -out_pssm '+paths[2])
+
+paths = ()
+for x in range(len(alignment_in)):
+  paths += job_list(out_path, alignment_in[x].id)
+
+def pool_handeler():
+  p = Pool(8)
+  p.map(psiblast_p, paths)
+
+pool_handeler()
+
+# for x in range(len(paths)):
+#   psiblast_p(paths[x])
+
+
