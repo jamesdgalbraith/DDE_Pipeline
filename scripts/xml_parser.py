@@ -111,7 +111,7 @@ with open(out_tsv, 'wt') as out_tsv:
                 perc_iden = round(100*(int(Hsp_identity)/int(Hsp_align_len)),3)
                 perc_iden = f'{perc_iden:.3f}'
                 mismatch = Hsp_midline.count(" ") + Hsp_midline.count("+") - Hsp_hseq.count("-") - Hsp_qseq.count("-")
-                tsv_writer.writerow([Iteration_query_ID, Hit_id, perc_iden, Hsp_align_len, mismatch, Hsp_gaps, Hsp_query_from, Hsp_query_to, Hsp_hit_from, Hsp_hit_to, Hsp_evalue, Hsp_bit_score, Hit_species, iteration, Hit_def])
+                tsv_writer.writerow([Iteration_query_ID, Hit_id, perc_iden, Hsp_align_len, mismatch, Hsp_gaps, Hsp_query_from, Hsp_query_to, Hsp_hit_from, Hsp_hit_to, Hsp_evalue, Hsp_bit_score, Hit_species, iteration, Iteration_query_len, Hit_def, re.sub("-", "", Hsp_hseq)])
                 if Trim is True:
                   if int(Hsp_query_from) <= args.start and int (Hsp_query_to) >= args.end:
                     o.write(re.sub(" ", "_", (">"+Hit_id+":"+Hsp_hit_from+"-"+Hsp_hit_to+"#"+Hit_species+"#Iteration "+iteration+'\n')))

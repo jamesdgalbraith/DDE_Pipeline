@@ -10,6 +10,10 @@ from multiprocessing import Pool
 parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--in_seq', type=str, required=True,
                     help='Input MSA to be trimmed. Must be fasta with .fasta extension')
+parser.add_argument('-t', '--threads', type=int, default=1,
+                    help='Number of psiblast processes to run at once')
+parser.add_argument('-b', '--blast_threads', type=int, default=1,
+                    help='Number of threads to use for each psiblast process')
 args = parser.parse_args()
 
 # set variables
@@ -45,14 +49,14 @@ def job_list(x, y):
 # func to run psiblast
 def psiblast_p(paths):
   print(sub('.pssm', '', sub('.*/', '', paths[0])))
-  os.system('psiblast -in_pssm '+paths[0]+' -db /home/james/databases/nr/nr -out '+paths[1]+' -num_threads 128 -num_iterations 3 -outfmt 5 -max_target_seqs 999999 -evalue 1e-5 -out_pssm '+paths[2])
+  os.system('psiblast -in_pssm '+paths[0]+' -db /home/james/databases/nr/nr -out '+paths[1]+' -num_threads '+str(args.blast_threads)+' -num_iterations 3 -outfmt 5 -max_target_seqs 999999 -evalue 1e-5 -out_pssm '+paths[2])
 
 paths = ()
 for x in range(len(alignment_in)):
   paths += job_list(out_path, alignment_in[x].id)
 
 def pool_handeler():
-  p = Pool(8)
+  p = Pool(args.threads)
   p.map(psiblast_p, paths)
 
 pool_handeler()
