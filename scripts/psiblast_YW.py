@@ -14,6 +14,8 @@ parser.add_argument('-t', '--threads', type=int, default=1,
                     help='Number of psiblast processes to run at once')
 parser.add_argument('-b', '--blast_threads', type=int, default=1,
                     help='Number of threads to use for each psiblast process')
+parser.add_argument('-i', '--iterations', type=int, default=1,
+                    help='Number of iterations to run')
 args = parser.parse_args()
 
 # set variables
@@ -49,7 +51,7 @@ def job_list(x, y):
 # func to run psiblast
 def psiblast_p(paths):
   print(sub('.pssm', '', sub('.*/', '', paths[0])))
-  os.system('psiblast -in_pssm '+paths[0]+' -db /home/james/databases/nr/nr -out '+paths[1]+' -num_threads '+str(args.blast_threads)+' -num_iterations 3 -outfmt 5 -max_target_seqs 999999 -evalue 1e-5 -out_pssm '+paths[2])
+  os.system('psiblast -in_pssm '+paths[0]+' -db /home/james/databases/nr/nr -out '+paths[1]+' -num_threads '+str(args.blast_threads)+' -num_iterations +'+str(iterations)+'+ -outfmt 5 -max_target_seqs 999999 -evalue 1e-5 -out_pssm '+paths[2])
 
 paths = ()
 for x in range(len(alignment_in)):
