@@ -2,7 +2,8 @@
 
 from Bio import AlignIO, SeqIO
 from Bio.Seq import Seq
-import Bio.Align
+from Bio.SeqRecord import SeqRecord
+from Bio.Align import MultipleSeqAlignment
 import os
 from re import sub
 import argparse
@@ -29,7 +30,7 @@ args = parser.parse_args()
 subfamily = sub('.fasta', '', sub('.*/', '', args.in_seq))
 out_path = args.out_dir+"/"+subfamily
 alignment_in = AlignIO.read(args.in_seq, 'fasta')
-folders_to_make=[out_path, out_path+'/split/', out_path+'/alignments/', out_path+'/pssms/', out_path+'/xml/', out_path+'/fastas/', out_path+'/new_pssms/', out_path+'/tbl/', out_path+'/initial/']
+folders_to_make=[out_path, out_path+'/split/', out_path+'/alignments/', out_path+'/pssms/', out_path+'/xml/', out_path+'/fastas/', out_path+'/new_pssms/', out_path+'/tbl/', out_path+'/initial_blast/']
 
 # check files and folders exists
 if os.path.exists(args.in_seq) == False:
@@ -40,19 +41,31 @@ def folder_check(x):
   if os.path.exists(x) is False:
     os.makedirs(x)
 
-# func to run tblastn/psiblast
-def psiblast_p(y):
-  print(y)
-  os.system('psiblast -subject '+out_path+'/split/'+y+'.fasta -in_msa '+args.in_seq+' -out_pssm '+out_path+'/pssms/'+y+'.pssm -out '+out_path+'/initial/'+y+'.xml -outfmt 5')
+# func to create pssms and run tblastn/psiblast
+def psiblast(x):
+  z=alignment_in[x].id # determine sequence name
+  print(z)
+  b = list(range(len(alignment_in))) # determine seqs to add
+  b.remove(x) # remove existing seqs
+  alignment_out = MultipleSeqAlignment(records=[]) # make empty alignment
+  alignment_out.append(alignment_in[x]) # add desired alignment
+  for y in b:
+    alignment_out.append(alignment_in[y]) # append all other sequences
+  AlignIO.write(alignment_out, out_path+'/alignments/'+z+'.fasta', 'fasta') # write alignment to file
+  unaligned=SeqRecord(Seq(sub('-', '', str(alignment_in[x].seq))),id=alignment_in[x].id,description='') # get unaligned sequence
+  SeqIO.write(unaligned, out_path+'/split/'+z+'.fasta', 'fasta') # write unaligned sequence to file
+  # construct pssm
+  os.system('psiblast -subject '+out_path+'/split/'+z+'.fasta -in_msa '+out_path+'/alignments/'+z+'.fasta -out_pssm '+out_path+'/pssms/'+z+'.pssm -out '+out_path+'/initial_blast/'+z+'.out -outfmt 6')
+  # run blast
   if args.db_type == 'prot':
-    os.system('psiblast -in_pssm '+out_path+'/pssms/'+y+'.pssm -db '+args.database+' -out '+out_path+'/xml/'+y+'.xml -num_threads '+str(args.blast_threads)+' -num_iterations '+str(args.iterations)+' -outfmt 5 -max_target_seqs 999999 -evalue 1e-5 -out_pssm '+out_path+'/new_pssms/'+y+'.pssm')
+    os.system('psiblast -in_pssm '+out_path+'/pssms/'+z+'.pssm -db '+args.database+' -out '+out_path+'/xml/'+z+'.xml -num_threads '+str(args.blast_threads)+' -num_iterations '+str(args.iterations)+' -outfmt 5 -max_target_seqs 999999 -evalue 1e-5 -out_pssm '+out_path+'/new_pssms/'+z+'.pssm')
   else:
-    os.system('tblastn -in_pssm '+out_path+'/pssms/'+y+'.pssm -db '+args.database+' -out '+out_path+'/xml/'+y+'.xml -num_threads '+str(args.blast_threads)+' -outfmt 5 -max_target_seqs 999999 -evalue 1e-5')
+    os.system('tblastn -in_pssm '+out_path+'/pssms/'+z+'.pssm -db '+args.database+' -out '+out_path+'/xml/'+z+'.xml -num_threads '+str(args.blast_threads)+' -outfmt 5 -max_target_seqs 999999 -evalue 1e-5')
 
 # func to parallelise paths
 def pool_handeler():
   p = Pool(args.threads)
-  p.map(psiblast_p, paths)
+  p.map(psiblast, list(range(len(alignment_in))))
 
 # check folders exist
 for x in folders_to_make:
@@ -65,18 +78,5 @@ if args.db_type == 'prot':
 else:
   if os.path.exists(args.database+'.ndb') == False:
     os.system('makeblastdb -in '+args.database+' -dbtype nucl -out '+args.database)
-
-# split fasta file and make pssms
-with open(args.in_seq, 'r') as handle:
-    for record in SeqIO.parse(handle, "fasta"):
-      record.seq=Seq(sub('-', '', str(record.seq)))
-      file_name = (out_path+'/split/'+record.name.split(sep="#")[0]+".fasta")
-      SeqIO.write(record, file_name, "fasta-2line")
-
-# make list of alignment sequences
-for x in range(len(alignment_in)):
-  if x == 0:
-    paths = []
-  paths.append(alignment_in[x].id)
 
 pool_handeler()
