@@ -1,7 +1,7 @@
 library(tidyverse)
 library(Biostrings)
 
-repeat_family <- "Ginger"
+repeat_family <- "piggyBac"
 query_names <- list.files(paste0("data/Repbase/", repeat_family, "_YW/tbl/"))
 
 for( i in seq_along(query_names)){
@@ -21,7 +21,6 @@ for( i in seq_along(query_names)){
   } 
 }
 
-table(best_hits$Hit_class)
 best_hits <- table_1 %>%
   filter(length >= 0.9*qlen) %>%
   group_by(sseqid) %>%
@@ -29,18 +28,20 @@ best_hits <- table_1 %>%
   dplyr::slice(1) %>%
   ungroup()
 
+table(best_hits$Hit_class)
+
 bleeding <- best_hits %>%
   filter(!Hit_class %in% c(repeat_family, "Ginger1", "DNA", "Ginger2/TDD", "MuDR", "EnSpm/CACTA", "Transib", "Kolobok",
                            "Harbinger", "ISL2EU", "Mariner/Tc1", "hAT", "Sola1", "Sola2", "Sola3"))
 
 best_hits <- best_hits  %>%
-  filter(Hit_class %in% c("Ginger1", "Ginger2/TDD")) 
+  filter(Hit_class %in% c("piggyBac")) 
 
 
-# single_species_seq <- AAStringSet(best_hits$Hit_seq)
-# names(single_species_seq) <- paste0(best_hits$sseqid, ":", best_hits$sstart, "-", best_hits$send, "#", gsub(" ", "_", best_hits$species))
-# if(!dir.exists(paste0("data/Repbase/", repeat_family, "_YW/extracted_fastas/"))){dir.create(paste0("data/Repbase/", repeat_family, "_YW/extracted_fastas/"))}
-# writeXStringSet(single_species_seq, paste0("data/Repbase/", repeat_family, "_YW/extracted_fastas/", repeat_family, "_YW.fasta"))
+single_species_seq <- AAStringSet(best_hits$Hit_seq)
+names(single_species_seq) <- paste0(best_hits$sseqid, ":", best_hits$sstart, "-", best_hits$send, "#", gsub(" ", "_", best_hits$species))
+if(!dir.exists(paste0("data/Repbase/", repeat_family, "_YW/extracted_fastas/"))){dir.create(paste0("data/Repbase/", repeat_family, "_YW/extracted_fastas/"))}
+writeXStringSet(single_species_seq, paste0("data/Repbase/", repeat_family, "_YW/extracted_fastas/", repeat_family, "_YW.fasta"))
 
 if(nrow(bleeding) > 0){
   
