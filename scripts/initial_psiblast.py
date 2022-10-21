@@ -58,7 +58,7 @@ def psiblast(x):
   os.system('psiblast -subject '+out_path+'/split/'+z+'.fasta -in_msa '+out_path+'/alignments/'+z+'.fasta -out_pssm '+out_path+'/pssms/'+z+'.pssm -out '+out_path+'/initial_blast/'+z+'.out -outfmt 6')
   # run blast
   if args.db_type == 'prot':
-    os.system('psiblast -in_pssm '+out_path+'/pssms/'+z+'.pssm -db '+args.database+' -out '+out_path+'/xml/'+z+'.xml -num_threads '+str(args.blast_threads)+' -num_iterations '+str(args.iterations)+' -outfmt 5 -max_target_seqs 999999 -evalue 1e-5 -out_pssm '+out_path+'/new_pssms/'+z+'.pssm')
+    os.system('psiblast -in_pssm '+out_path+'/pssms/'+z+'.pssm -db '+args.database+' -out '+out_path+'/xml/'+z+'.xml -num_threads '+str(args.blast_threads)+' -num_iterations '+str(args.iterations)+' -outfmt 5 -max_target_seqs 999999 -evalue 1e-5 -out_pssm '+out_path+'/new_pssms/'+z+'.pssm -frame_shift_penalty 1')
   else:
     os.system('tblastn -in_pssm '+out_path+'/pssms/'+z+'.pssm -db '+args.database+' -out '+out_path+'/xml/'+z+'.xml -num_threads '+str(args.blast_threads)+' -outfmt 5 -max_target_seqs 999999 -evalue 1e-5')
 

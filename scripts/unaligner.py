@@ -28,8 +28,8 @@ with open(args.in_seq, 'r') as f:
             if (line[0] == ">"):
                 if(index > 0):
                     o.write("\n")
-                    o.write(re.sub("-", "", line))
-                    # sys.stdout.write(line)
+                    o.write(re.sub("", "", line))
+                    sys.stdout.write(line)
                 else:
                     o.write("\n")
                     o.write(re.sub("-", "", line))

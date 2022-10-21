@@ -29,6 +29,6 @@ for x in range(len(alignment_in)):
 with open(args.unaligned, 'r') as handle:
   with open(args.out, 'w') as briefcase:
     for record in SeqIO.parse(handle, "fasta"):
-        if re.sub(":.*", "", record.name.upper()) not in id_list:
+        if sub(":.*", "", record.name.upper()) not in id_list:
           SeqIO.write(record, briefcase, "fasta-2line")
 
