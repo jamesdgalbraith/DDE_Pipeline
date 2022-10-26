@@ -1,7 +1,7 @@
 library(tidyverse)
 library(Biostrings)
 
-repeat_families <- read_tsv("starting_seq/classes.txt", col_names = "repeat_family")
+repeat_families <- read_tsv("classes.txt", col_names = "repeat_family")
 pass <- "pass_2"
 for (j in 1:nrow(repeat_families)){
   repeat_family <- repeat_families$repeat_family[j]
@@ -44,7 +44,7 @@ for (j in 1:nrow(repeat_families)){
     best_hits$Hit_seq <- gsub("\\*", "X", best_hits$Hit_seq)
     
     single_species_seq <- AAStringSet(best_hits$Hit_seq)
-    names(single_species_seq) <- paste0(best_hits$sseqid, "#", gsub(" ", "_", best_hits$species))
+    names(single_species_seq) <- substr(paste0(best_hits$sseqid, "#", gsub(" ", "_", best_hits$species)), 1, 49)
     if(!dir.exists(paste0("data/", pass, "/", repeat_family, "/extracted_fastas/"))){dir.create(paste0("data/", pass, "/", repeat_family, "/extracted_fastas/"))}
     writeXStringSet(single_species_seq, paste0("data/", pass, "/", repeat_family, "/extracted_fastas/", repeat_family, ".fasta"))
     
@@ -56,7 +56,7 @@ for (j in 1:nrow(repeat_families)){
         class_in_q <- bleeding[toupper(bleeding$Hit_class) == toupper(bleeding_classes$Hit_class[i]),]
         class_in_q
         class_in_q_seq <- AAStringSet(class_in_q$Hit_seq)
-        names(class_in_q_seq) <- paste0(class_in_q$sseqid, "#", gsub(" ", "_", class_in_q$species))
+        names(class_in_q_seq) <- substr(paste0(class_in_q$sseqid, "#", gsub(" ", "_", class_in_q$species)), 1, 49)
         if(!dir.exists(paste0("data/", pass, "/others/extracted_fastas"))){dir.create(path = paste0("data/", pass, "/others/extracted_fastas/"), recursive = T)}
         writeXStringSet(class_in_q_seq, filepath = paste0("data/", pass, "/others/extracted_fastas/", sub("/.*", "", bleeding_classes$Hit_class[i]), "_", repeat_family, ".fasta"))
       }
@@ -105,7 +105,7 @@ best_hits <- best_hits  %>%
 best_hits$Hit_seq <- gsub("\\*", "X", best_hits$Hit_seq)
 
 single_species_seq <- AAStringSet(best_hits$Hit_seq)
-names(single_species_seq) <- paste0(best_hits$sseqid, "#", gsub(" ", "_", best_hits$species))
+names(single_species_seq) <- substr(paste0(best_hits$sseqid, "#", gsub(" ", "_", best_hits$species)), 1, 49)
 if(!dir.exists(paste0("data/", pass, "/", repeat_family, "/extracted_fastas/"))){dir.create(paste0("data/", pass, "/", repeat_family, "/extracted_fastas/"))}
 writeXStringSet(single_species_seq, paste0("data/", pass, "/", repeat_family, "/extracted_fastas/", repeat_family, ".fasta"))
 
@@ -117,7 +117,7 @@ if(nrow(bleeding) > 0){
     class_in_q <- bleeding[toupper(bleeding$Hit_class) == toupper(bleeding_classes$Hit_class[i]),]
     class_in_q
     class_in_q_seq <- AAStringSet(class_in_q$Hit_seq)
-    names(class_in_q_seq) <- paste0(class_in_q$sseqid, "#", gsub(" ", "_", class_in_q$species))
+    names(class_in_q_seq) <- names(class_in_q_seq) <- substr(paste0(class_in_q$sseqid, "#", gsub(" ", "_", class_in_q$species)), 1, 49)
     if(!dir.exists(paste0("data/", pass, "/others/extracted_fastas"))){dir.create(path = paste0("data/", pass, "/others/extracted_fastas/"), recursive = T)}
     writeXStringSet(class_in_q_seq, filepath = paste0("data/", pass, "/others/extracted_fastas/", sub("/.*", "", bleeding_classes$Hit_class[i]), "_", repeat_family, ".fasta"))
   }
@@ -165,7 +165,7 @@ best_hits <- best_hits  %>%
 best_hits$Hit_seq <- gsub("\\*", "X", best_hits$Hit_seq)
 
 single_species_seq <- AAStringSet(best_hits$Hit_seq)
-names(single_species_seq) <- paste0(best_hits$sseqid, "#", gsub(" ", "_", best_hits$species))
+names(single_species_seq) <- substr(paste0(best_hits$sseqid, "#", gsub(" ", "_", best_hits$species)), 1, 49)
 if(!dir.exists(paste0("data/", pass, "/", repeat_family, "/extracted_fastas/"))){dir.create(paste0("data/", pass, "/", repeat_family, "/extracted_fastas/"))}
 writeXStringSet(single_species_seq, paste0("data/", pass, "/", repeat_family, "/extracted_fastas/", repeat_family, ".fasta"))
 
@@ -177,7 +177,7 @@ if(nrow(bleeding) > 0){
     class_in_q <- bleeding[toupper(bleeding$Hit_class) == toupper(bleeding_classes$Hit_class[i]),]
     class_in_q
     class_in_q_seq <- AAStringSet(class_in_q$Hit_seq)
-    names(class_in_q_seq) <- paste0(class_in_q$sseqid, "#", gsub(" ", "_", class_in_q$species))
+    names(class_in_q_seq) <- names(class_in_q_seq) <- substr(paste0(class_in_q$sseqid, "#", gsub(" ", "_", class_in_q$species)), 1, 49)
     if(!dir.exists(paste0("data/", pass, "/others/extracted_fastas"))){dir.create(path = paste0("data/", pass, "/others/extracted_fastas/"), recursive = T)}
     writeXStringSet(class_in_q_seq, filepath = paste0("data/", pass, "/others/extracted_fastas/", sub("/.*", "", bleeding_classes$Hit_class[i]), "_", repeat_family, ".fasta"))
   }
@@ -224,7 +224,7 @@ best_hits <- best_hits  %>%
 best_hits$Hit_seq <- gsub("\\*", "X", best_hits$Hit_seq)
 
 single_species_seq <- AAStringSet(best_hits$Hit_seq)
-names(single_species_seq) <- paste0(best_hits$sseqid, "#", gsub(" ", "_", best_hits$species))
+names(single_species_seq) <- substr(paste0(best_hits$sseqid, "#", gsub(" ", "_", best_hits$species)), 1, 49)
 if(!dir.exists(paste0("data/", pass, "/", repeat_family, "/extracted_fastas/"))){dir.create(paste0("data/", pass, "/", repeat_family, "/extracted_fastas/"))}
 writeXStringSet(single_species_seq, paste0("data/", pass, "/", repeat_family, "/extracted_fastas/", repeat_family, ".fasta"))
 
@@ -236,7 +236,7 @@ if(nrow(bleeding) > 0){
     class_in_q <- bleeding[toupper(bleeding$Hit_class) == toupper(bleeding_classes$Hit_class[i]),]
     class_in_q
     class_in_q_seq <- AAStringSet(class_in_q$Hit_seq)
-    names(class_in_q_seq) <- paste0(class_in_q$sseqid, "#", gsub(" ", "_", class_in_q$species))
+    names(class_in_q_seq) <- names(class_in_q_seq) <- substr(paste0(class_in_q$sseqid, "#", gsub(" ", "_", class_in_q$species)), 1, 49)
     if(!dir.exists(paste0("data/", pass, "/others/extracted_fastas"))){dir.create(path = paste0("data/", pass, "/others/extracted_fastas/"), recursive = T)}
     writeXStringSet(class_in_q_seq, filepath = paste0("data/", pass, "/others/extracted_fastas/", sub("/.*", "", bleeding_classes$Hit_class[i]), "_", repeat_family, ".fasta"))
   }
@@ -283,7 +283,7 @@ best_hits <- best_hits  %>%
 best_hits$Hit_seq <- gsub("\\*", "X", best_hits$Hit_seq)
 
 single_species_seq <- AAStringSet(best_hits$Hit_seq)
-names(single_species_seq) <- paste0(best_hits$sseqid, "#", gsub(" ", "_", best_hits$species))
+names(single_species_seq) <- substr(paste0(best_hits$sseqid, "#", gsub(" ", "_", best_hits$species)), 1, 49)
 if(!dir.exists(paste0("data/", pass, "/", repeat_family, "/extracted_fastas/"))){dir.create(paste0("data/", pass, "/", repeat_family, "/extracted_fastas/"))}
 writeXStringSet(single_species_seq, paste0("data/", pass, "/", repeat_family, "/extracted_fastas/", repeat_family, ".fasta"))
 
@@ -295,7 +295,7 @@ if(nrow(bleeding) > 0){
     class_in_q <- bleeding[toupper(bleeding$Hit_class) == toupper(bleeding_classes$Hit_class[i]),]
     class_in_q
     class_in_q_seq <- AAStringSet(class_in_q$Hit_seq)
-    names(class_in_q_seq) <- paste0(class_in_q$sseqid, "#", gsub(" ", "_", class_in_q$species))
+    names(class_in_q_seq) <- names(class_in_q_seq) <- substr(paste0(class_in_q$sseqid, "#", gsub(" ", "_", class_in_q$species)), 1, 49)
     if(!dir.exists(paste0("data/", pass, "/others/extracted_fastas"))){dir.create(path = paste0("data/", pass, "/others/extracted_fastas/"), recursive = T)}
     writeXStringSet(class_in_q_seq, filepath = paste0("data/", pass, "/others/extracted_fastas/", sub("/.*", "", bleeding_classes$Hit_class[i]), "_", repeat_family, ".fasta"))
   }
