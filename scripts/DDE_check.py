@@ -5,9 +5,7 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio.Align import MultipleSeqAlignment, AlignInfo
 import os
-from re import sub
 import argparse
-from multiprocessing import Pool
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-a', '--original_alignment', type=str, required=True,
@@ -18,36 +16,35 @@ parser.add_argument('-o', '--cleaned_alignment', type=str, required=True,
                     help='Out alignment')
 args = parser.parse_args()
 
-# original_alignment="starting_seq/Transib.fasta"
-# new_alignment="seq_pass_3/Transib.fasta"
-# cleaned_alignment="seq_pass_4/Transib.fasta"
-
+print(args.original_alignment)
 og_len = len(AlignIO.read(args.original_alignment, 'fasta'))
 alignment_in = AlignIO.read(args.new_alignment, 'fasta')
-consensus_seq = str(AlignInfo.SummaryInfo(alignment_in[0:og_len]).gap_consensus(threshold=0.9, ambiguous="X"))
+to_check=alignment_in[0:og_len]
+to_clean=alignment_in[og_len:len(alignment_in)]
 
-# find positions of Ds and Es
-def DDE_find(Cs):
-  for i in range(len(Cs)):
-    if i == 0:
-      DDE_pos=[]
-    if Cs[i] == "D" or Cs[i] == "E":
-      DDE_pos.append(i)
-  return DDE_pos
+# count number of Ds and Es at each position
+DDE_sum = [0] * len(to_check[0].seq)
+for j in range(og_len):
+  for i in range(len(DDE_sum)):
+    if str(to_check[j].seq)[i] == "D" or str(to_check[j].seq)[i] == "E":
+      DDE_sum[i] += 1
 
-# Check if seq is correct at each position, input is positions containing 90% Ds&Es and alignment_in[i].seq
-def DDE_check(Dp, Al, handle):
-  for j in range(len(Dp)):
-    if j == 0:
-      Dc=[] # make list for storing if D or E
-    Dc.append(str(Al.seq)[Dp[j]] == consensus_seq[Dp[j]])
-    if j == len(Dp)-1 and all(Dc) is True:
-      SeqIO.write(Al, handle=handle, format="fasta-2line") # append to file if all is good
-print(DDE_find(consensus_seq))
+# determine which og positions have over 90% Ds or Es
+DDE_pos=[]
+for i in range(len(DDE_sum)):
+  if DDE_sum[i]/og_len == 1:
+    DDE_pos.append(i)
+print(DDE_pos)
+
+# individually check each sequence in alignment to determine if sequences have Ds or Es at correct position
 with open(args.cleaned_alignment, 'w') as handle:
-  for k in range(len(alignment_in)):
-    DDE_check(DDE_find(consensus_seq), alignment_in[k], handle)
-
-
-
-  
+  AlignIO.write(to_check, handle, "fasta")
+  for i in range(len(to_clean)):
+    for j in range(len(DDE_pos)):
+      # create list to store if DDE in correct positions
+      if j == 0:
+        DDE_check = []
+      DDE_check.append(str(to_clean[i].seq)[DDE_pos[j]] == 'D' or str(to_clean[i].seq)[DDE_pos[j]] == 'E')
+    # write to file if all necessary positions have Ds or Es
+    if all(DDE_check):
+      SeqIO.write(to_clean[i], handle=handle, format="fasta-2line") # append to file if all is good

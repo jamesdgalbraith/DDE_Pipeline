@@ -30,7 +30,7 @@ args = parser.parse_args()
 subfamily = sub('.fasta', '', sub('.*/', '', args.in_seq))
 out_path = args.out_dir+"/"+subfamily
 alignment_in = AlignIO.read(args.in_seq, 'fasta')
-folders_to_make=[out_path, out_path+'/split/', out_path+'/alignments/', out_path+'/pssms/', out_path+'/xml/', out_path+'/fastas/', out_path+'/new_pssms/', out_path+'/tbl/', out_path+'/initial_blast/']
+folders_to_make=[out_path, out_path+'/split/', out_path+'/alignments/', out_path+'/pssms/', out_path+'/xml/', out_path+'/fasta/', out_path+'/new_pssms/', out_path+'/tbl/', out_path+'/initial_blast/']
 
 # check files and folders exists
 if os.path.exists(args.in_seq) == False:
@@ -55,12 +55,12 @@ def psiblast(x):
   unaligned=SeqRecord(Seq(sub('-', '', str(alignment_in[x].seq))),id=alignment_in[x].id,description='') # get unaligned sequence
   SeqIO.write(unaligned, out_path+'/split/'+z+'.fasta', 'fasta') # write unaligned sequence to file
   # construct pssm
-  os.system('psiblast -subject '+out_path+'/split/'+z+'.fasta -in_msa '+out_path+'/alignments/'+z+'.fasta -out_pssm '+out_path+'/pssms/'+z+'.pssm -out '+out_path+'/initial_blast/'+z+'.out -outfmt 6')
+  os.system('psiblast -subject '+out_path+'/split/'+z+'.fasta -in_msa '+out_path+'/alignments/'+z+'.fasta -out_pssm '+out_path+'/pssms/'+z+'.pssm -out '+out_path+'/initial_blast/'+z+'.out -outfmt 6 -comp_based_stats 1')
   # run blast
   if args.db_type == 'prot':
     os.system('psiblast -in_pssm '+out_path+'/pssms/'+z+'.pssm -db '+args.database+' -out '+out_path+'/xml/'+z+'.xml -num_threads '+str(args.blast_threads)+' -num_iterations '+str(args.iterations)+' -outfmt 5 -max_target_seqs 999999 -evalue 1e-5 -out_pssm '+out_path+'/new_pssms/'+z+'.pssm')
   else:
-    os.system('tblastn -in_pssm '+out_path+'/pssms/'+z+'.pssm -db '+args.database+' -out '+out_path+'/xml/'+z+'.xml -num_threads '+str(args.blast_threads)+' -outfmt 5 -max_target_seqs 999999 -evalue 1e-5 -frame_shift_penalty 1')
+    os.system('tblastn -in_pssm '+out_path+'/pssms/'+z+'.pssm -db '+args.database+' -out '+out_path+'/xml/'+z+'.xml -num_threads '+str(args.blast_threads)+' -outfmt 5 -max_target_seqs 999999 -evalue 1e-5')
 
 # func to parallelise paths
 def pool_handeler():
