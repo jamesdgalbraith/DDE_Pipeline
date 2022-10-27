@@ -1,31 +1,19 @@
 library(tidyverse)
 library(Biostrings)
 
+# first parallel -a classes.txt --bar -j 1 cat ./data/pass_3/{}/tbl/*.tsv ">" ./data/pass_3/{}/tbl/compiled_{}.out
+
 repeat_families <- read_tsv("classes.txt", col_names = "repeat_family")
-pass <- "pass_2"
+pass <- "pass_3"
 for (j in 1:nrow(repeat_families)){
-  repeat_family <- repeat_families$repeat_family[j]
-  query_names <- list.files(paste0("data/", pass, "/", repeat_family, "/tbl/"))
-  
   if(!repeat_family %in% c("Ginger", "PHIS", "CMC", "Tc1marPlm")){
-    print(repeat_family)
-    for( i in seq_along(query_names)){
-      if(i == 1){
-        table_1 <- read_tsv(paste0("data/", pass, "/", repeat_family, "/tbl/", query_names[i]),
-                            col_names = c("qseqid", "sseqid", "pident", "length", "mismatch",
-                                          "gapopen", "qstart", "qend", "sstart", "send",
-                                          "evalue", "bitscore", "species", "iteration",
-                                          "qlen", "Hit_seq", "Hit_class"))
-      } else{
-        table_1 <- rbind(table_1,
-                         read_tsv(paste0("data/", pass, "/", repeat_family, "/tbl/", query_names[i]),
-                                  col_names = c("qseqid", "sseqid", "pident", "length", "mismatch",
-                                                "gapopen", "qstart", "qend", "sstart", "send",
-                                                "evalue", "bitscore", "species", "iteration",
-                                                "qlen", "Hit_seq", "Hit_class")))
-      } 
-    }
-    
+  repeat_family <- repeat_families$repeat_family[j]
+  table_1 <- read_tsv(paste0("data/", pass, "/", repeat_family, "/tbl/compiled_", repeat_family, ".out"),
+                      col_names = c("qseqid", "sseqid", "pident", "length", "mismatch",
+                                    "gapopen", "qstart", "qend", "sstart", "send",
+                                    "evalue", "bitscore", "species", "iteration",
+                                    "qlen", "Hit_seq", "Hit_class"))
+  
     best_hits <- table_1 %>%
       filter(length >= 0.9*qlen) %>%
       group_by(sseqid) %>%
@@ -67,25 +55,11 @@ for (j in 1:nrow(repeat_families)){
 
 #### Ginger ####
 repeat_family <- "Ginger"
-query_names <- list.files(paste0("data/", pass, "/", repeat_family, "/tbl/"))
-
-print(repeat_family)
-for( i in seq_along(query_names)){
-  if(i == 1){
-    table_1 <- read_tsv(paste0("data/", pass, "/", repeat_family, "/tbl/", query_names[i]),
-                        col_names = c("qseqid", "sseqid", "pident", "length", "mismatch",
-                                      "gapopen", "qstart", "qend", "sstart", "send",
-                                      "evalue", "bitscore", "species", "iteration",
-                                      "qlen", "Hit_seq", "Hit_class"))
-  } else{
-    table_1 <- rbind(table_1,
-                     read_tsv(paste0("data/", pass, "/", repeat_family, "/tbl/", query_names[i]),
-                              col_names = c("qseqid", "sseqid", "pident", "length", "mismatch",
-                                            "gapopen", "qstart", "qend", "sstart", "send",
-                                            "evalue", "bitscore", "species", "iteration",
-                                            "qlen", "Hit_seq", "Hit_class")))
-  } 
-}
+table_1 <- read_tsv(paste0("data/", pass, "/", repeat_family, "/tbl/compiled_", repeat_family, ".out"),
+                    col_names = c("qseqid", "sseqid", "pident", "length", "mismatch",
+                                  "gapopen", "qstart", "qend", "sstart", "send",
+                                  "evalue", "bitscore", "species", "iteration",
+                                  "qlen", "Hit_seq", "Hit_class"))
 
 best_hits <- table_1 %>%
   filter(length >= 0.9*qlen) %>%
@@ -126,26 +100,11 @@ if(nrow(bleeding) > 0){
 
 
 #### PHIS ####
-repeat_family <- "PHIS"
-query_names <- list.files(paste0("data/", pass, "/", repeat_family, "/tbl/"))
-
-print(repeat_family)
-for( i in seq_along(query_names)){
-  if(i == 1){
-    table_1 <- read_tsv(paste0("data/", pass, "/", repeat_family, "/tbl/", query_names[i]),
-                        col_names = c("qseqid", "sseqid", "pident", "length", "mismatch",
-                                      "gapopen", "qstart", "qend", "sstart", "send",
-                                      "evalue", "bitscore", "species", "iteration",
-                                      "qlen", "Hit_seq", "Hit_class"))
-  } else{
-    table_1 <- rbind(table_1,
-                     read_tsv(paste0("data/", pass, "/", repeat_family, "/tbl/", query_names[i]),
-                              col_names = c("qseqid", "sseqid", "pident", "length", "mismatch",
-                                            "gapopen", "qstart", "qend", "sstart", "send",
-                                            "evalue", "bitscore", "species", "iteration",
-                                            "qlen", "Hit_seq", "Hit_class")))
-  } 
-}
+table_1 <- read_tsv(paste0("data/", pass, "/", repeat_family, "/tbl/compiled_", repeat_family, ".out"),
+                    col_names = c("qseqid", "sseqid", "pident", "length", "mismatch",
+                                  "gapopen", "qstart", "qend", "sstart", "send",
+                                  "evalue", "bitscore", "species", "iteration",
+                                  "qlen", "Hit_seq", "Hit_class"))
 
 best_hits <- table_1 %>%
   filter(length >= 0.9*qlen) %>%
@@ -186,25 +145,11 @@ if(nrow(bleeding) > 0){
 
 #### CMC ####
 repeat_family <- "CMC"
-query_names <- list.files(paste0("data/", pass, "/", repeat_family, "/tbl/"))
-
-print(repeat_family)
-for( i in seq_along(query_names)){
-  if(i == 1){
-    table_1 <- read_tsv(paste0("data/", pass, "/", repeat_family, "/tbl/", query_names[i]),
-                        col_names = c("qseqid", "sseqid", "pident", "length", "mismatch",
-                                      "gapopen", "qstart", "qend", "sstart", "send",
-                                      "evalue", "bitscore", "species", "iteration",
-                                      "qlen", "Hit_seq", "Hit_class"))
-  } else{
-    table_1 <- rbind(table_1,
-                     read_tsv(paste0("data/", pass, "/", repeat_family, "/tbl/", query_names[i]),
-                              col_names = c("qseqid", "sseqid", "pident", "length", "mismatch",
-                                            "gapopen", "qstart", "qend", "sstart", "send",
-                                            "evalue", "bitscore", "species", "iteration",
-                                            "qlen", "Hit_seq", "Hit_class")))
-  } 
-}
+table_1 <- read_tsv(paste0("data/", pass, "/", repeat_family, "/tbl/compiled_", repeat_family, ".out"),
+                    col_names = c("qseqid", "sseqid", "pident", "length", "mismatch",
+                                  "gapopen", "qstart", "qend", "sstart", "send",
+                                  "evalue", "bitscore", "species", "iteration",
+                                  "qlen", "Hit_seq", "Hit_class"))
 
 best_hits <- table_1 %>%
   filter(length >= 0.9*qlen) %>%
@@ -245,25 +190,13 @@ if(nrow(bleeding) > 0){
 
 #### Mariner/Tc1 ####
 repeat_family <- "Tc1marPlm"
-query_names <- list.files(paste0("data/", pass, "/", repeat_family, "/tbl/"))
 
 print(repeat_family)
-for( i in seq_along(query_names)){
-  if(i == 1){
-    table_1 <- read_tsv(paste0("data/", pass, "/", repeat_family, "/tbl/", query_names[i]),
+table_1 <- read_tsv(paste0("data/", pass, "/", repeat_family, "/tbl/compiled_", repeat_family, ".out"),
                         col_names = c("qseqid", "sseqid", "pident", "length", "mismatch",
                                       "gapopen", "qstart", "qend", "sstart", "send",
                                       "evalue", "bitscore", "species", "iteration",
                                       "qlen", "Hit_seq", "Hit_class"))
-  } else{
-    table_1 <- rbind(table_1,
-                     read_tsv(paste0("data/", pass, "/", repeat_family, "/tbl/", query_names[i]),
-                              col_names = c("qseqid", "sseqid", "pident", "length", "mismatch",
-                                            "gapopen", "qstart", "qend", "sstart", "send",
-                                            "evalue", "bitscore", "species", "iteration",
-                                            "qlen", "Hit_seq", "Hit_class")))
-  } 
-}
 
 best_hits <- table_1 %>%
   filter(length >= 0.9*qlen) %>%
