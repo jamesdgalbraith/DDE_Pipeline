@@ -10,6 +10,4 @@ parser.add_argument('-o', '--out_seq', type=str, required=True,
                     help='Output NEXUS')
 args = parser.parse_args()
 
-records = SeqIO.parse(args.in_seq, "fasta")
-count = SeqIO.write(records, args.out_seq, "nexus")
-print("Converted %i records" % count)
+SeqIO.convert(args.in_seq, "fasta", args.out_seq, "nexus", molecule_type="protein")
