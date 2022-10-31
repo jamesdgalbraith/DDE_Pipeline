@@ -9,4 +9,4 @@ parser.add_argument('-o', '--out', type=str, required=True,
 args = parser.parse_args()
 
 records = SeqIO.parse(args.in, "fasta")
-count = SeqIO.write(args.out, "nexus")
+count = SeqIO.write(args.out, records, "nexus")
