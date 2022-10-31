@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from Bio import SeqIO
 import argparse
 
@@ -8,5 +10,7 @@ parser.add_argument('-o', '--out', type=str, required=True,
                     help='Output NEXUS')
 args = parser.parse_args()
 
-records = SeqIO.parse(args.in, "fasta")
-count = SeqIO.write(args.out, records, "nexus")
+
+
+# records = SeqIO.parse(args.in, "fasta")
+# count = SeqIO.write(args.out, records, "nexus")
