@@ -1,38 +1,29 @@
 library(tidyverse)
 
 repeat_family <- "CMC"
-query_names <- list.files(paste0("data/nr/", repeat_family, "_YW/tbl/"))
+table_1 <- read_tsv(paste0("data/nr_pass_1//", repeat_family, "/tbl/compiled_", repeat_family, ".out"),
+                    col_names = c("qseqid", "sseqid", "pident", "length", "mismatch",
+                                  "gapopen", "qstart", "qend", "sstart", "send",
+                                  "evalue", "bitscore", "species", "iteration",
+                                  "qlen", "stitle", "Hit_seq"))
 
-for( i in seq_along(query_names)){
-  if(i == 1){
-    table_1 <- read_tsv(paste0("data/nr/", repeat_family, "_YW/tbl/", query_names[i]),
-                        col_names = c("qseqid", "sseqid", "pident", "length", "mismatch",
-                                      "gapopen", "qstart", "qend", "sstart", "send",
-                                      "evalue", "bitscore", "species", "iteration",
-                                      "qlen", "stitle", "Hit_seq"))
-  } else{
-    table_1 <- rbind(table_1,
-                     read_tsv(paste0("data/nr/", repeat_family, "_YW/tbl/", query_names[i]),
-                              col_names = c("qseqid", "sseqid", "pident", "length", "mismatch",
-                                            "gapopen", "qstart", "qend", "sstart", "send",
-                                            "evalue", "bitscore", "species", "iteration",
-                                            "qlen", "stitle", "Hit_seq")))
-  } 
-}
+table_1
 
 # select best hits
 best_hits <- table_1 %>%
-  filter(length >= 0.9*qlen) %>%
+  filter(qstart < 6, qend >= qlen - 11) %>%
   group_by(sseqid) %>%
   arrange(sseqid, -length) %>%
   dplyr::slice(1) %>%
   ungroup()
 
+
+
 # get sequences
-single_species_seq <- AAStringSet(best_hits$Hit_seq)
-names(single_species_seq) <- paste0(best_hits$sseqid, ":", best_hits$sstart, "-", best_hits$send, "#", gsub(" ", "_", best_hits$species))
-if(!dir.exists(paste0("data/nr/", repeat_family, "_YW/extracted_fastas/"))){dir.create(paste0("data/nr/", repeat_family, "_YW/extracted_fastas/"))}
-writeXStringSet(single_species_seq, paste0("data/nr/", repeat_family, "_YW/extracted_fastas/", repeat_family, "_YW.fasta"))
+single_species_seq <- AAStringSet(gsub("\\*", "X", best_hits$Hit_seq))
+names(single_species_seq) <- substr(paste0(best_hits$sseqid,"#", gsub(" ", "_", best_hits$species)), 1, 49)
+if(!dir.exists(paste0("data/nr_pass_1/", repeat_family, "/extracted_fastas/"))){dir.create(paste0("data/nr_pass_1//", repeat_family, "/extracted_fastas/"))}
+writeXStringSet(single_species_seq, paste0("data/nr_pass_1//", repeat_family, "/extracted_fastas/", repeat_family, ".fasta"))
 
 # plotting
 new_hits<-table_1 %>%
