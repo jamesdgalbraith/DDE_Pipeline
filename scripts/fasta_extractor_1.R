@@ -1,5 +1,8 @@
+#!/usr/bin/R
+
 library(tidyverse)
 library(Biostrings)
+library(optparse)
 
 # parse input variables
 option_list = list(
