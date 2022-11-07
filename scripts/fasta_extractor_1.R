@@ -20,7 +20,8 @@ table_1 <- read_tsv(paste0("data/", opt$directory, "/", opt$family, "/tbl/compil
                     col_names = c("qseqid", "sseqid", "pident", "length", "mismatch",
                                   "gapopen", "qstart", "qend", "sstart", "send",
                                   "evalue", "bitscore", "species", "iteration",
-                                  "qlen", "stitle", "Hit_seq"))
+                                  "qlen", "stitle", "Hit_seq"),
+                    show_col_types = F)
 
 # select best hits
 best_hits <- table_1 %>%
