@@ -1,8 +1,9 @@
 #!/usr/bin/R
 
-library(tidyverse)
-library(Biostrings)
-library(optparse)
+suppressMessages(library(tidyverse))
+suppressMessages(library(Biostrings))
+suppressMessages(library(optparse))
+
 
 # parse input variables
 option_list = list(
