@@ -1,27 +1,24 @@
 library(tidyverse)
+library(Biostrings)
 
-repeat_family <- "CMC"
-table_1 <- read_tsv(paste0("data/nr_pass_1//", repeat_family, "/tbl/compiled_", repeat_family, ".out"),
+repeat_family <- "Zisupton"
+table_1 <- read_tsv(paste0("data/nr_pass_1/", repeat_family, "/tbl/compiled_", repeat_family, ".out"),
                     col_names = c("qseqid", "sseqid", "pident", "length", "mismatch",
                                   "gapopen", "qstart", "qend", "sstart", "send",
                                   "evalue", "bitscore", "species", "iteration",
                                   "qlen", "stitle", "Hit_seq"))
 
-table_1
-
 # select best hits
 best_hits <- table_1 %>%
-  filter(qstart < 6, qend >= qlen - 11) %>%
+  filter(length/qlen > 0.95, evalue < 1e-5, iteration <=3) %>%
   group_by(sseqid) %>%
-  arrange(sseqid, -length) %>%
+  arrange(sseqid, -bitscore) %>%
   dplyr::slice(1) %>%
   ungroup()
 
-
-
 # get sequences
 single_species_seq <- AAStringSet(gsub("\\*", "X", best_hits$Hit_seq))
-names(single_species_seq) <- substr(paste0(best_hits$sseqid,"#", gsub(" ", "_", best_hits$species)), 1, 49)
+names(single_species_seq) <- paste0(best_hits$sseqid,"#", gsub(" ", "_", best_hits$species))
 if(!dir.exists(paste0("data/nr_pass_1/", repeat_family, "/extracted_fastas/"))){dir.create(paste0("data/nr_pass_1//", repeat_family, "/extracted_fastas/"))}
 writeXStringSet(single_species_seq, paste0("data/nr_pass_1//", repeat_family, "/extracted_fastas/", repeat_family, ".fasta"))
 
