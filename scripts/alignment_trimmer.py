@@ -61,7 +61,8 @@ for i in range(len(trimmed_alignment)):
     print(trimmed_alignment[i].name)
     start_gaps = (str(trimmed_alignment[i].seq[0:5]).count('-'))
     end_gaps = (str(trimmed_alignment[i].seq[(len(trimmed_alignment[0])-5):len(trimmed_alignment[0])]).count('-'))
-    if start_gaps < 5 and end_gaps < 5:
+    prop_gaps = (str(trimmed_alignment[i].seq).count('-'))/len(str(trimmed_alignment[i].seq))
+    if start_gaps < 5 and end_gaps < 5 and prop_gaps <= 0.5:
         trimmed_alignment_2.append(SeqRecord(trimmed_alignment[i].seq, name = trimmed_alignment[i].name, id = trimmed_alignment[i].id, description = ""))
 
 # save alignment
