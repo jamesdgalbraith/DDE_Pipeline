@@ -28,6 +28,6 @@ table_1 <- read_tsv(paste0(opt$directory, "/", opt$family, "/tbl/", opt$tsv),
 
 # write trimmed table
 if(nrow(table_1 > 0)){
-  write_tsv(table_1, paste0(opt$directory, "/", opt$family, "/tbl/trimmed/", opt$tsv))
+  write_tsv(table_1, paste0(opt$directory, "/", opt$family, "/tbl/trimmed/", opt$tsv), col_names = F)
 }
 
