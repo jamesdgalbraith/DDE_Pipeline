@@ -61,17 +61,13 @@ Extract sequences from table
 
 `Rscript scripts/fasta_extractor_1.R -f Tc1marPlm -d nr_pass_1`
 
-`Remove any sequences in original alignment`
+Cluster sequences
 
-`./scripts/realignment_cleaner.py -a seq_pass_0/Tc1marPlm.fasta -u data/nr_pass_1/Tc1marPlm/extracted_fastas/Tc1marPlm.fasta -o data/nr_pass_1/Tc1marPlm/extracted_fastas/cleaned_Tc1marPlm.fasta`
-
-Cluster cleaned
-
-`cd-hit -i data/nr_pass_1/Tc1marPlm/extracted_fastas/cleaned_Tc1marPlm.fasta -o data/nr_pass_1/Tc1marPlm/extracted_fastas/cleaned_Tc1marPlm.fasta.cd -c 0.8`
+`cd-hit -i data/nr_pass_1/Tc1marPlm/extracted_fastas/data/nr_pass_1/Tc1marPlm/extracted_fastas/Tc1marPlm.fasta -o data/nr_pass_1/Tc1marPlm/extracted_fastas/data/nr_pass_1/Tc1marPlm/extracted_fastas/Tc1marPlm.fasta.75.cd -c 0.75 -d 100`
 
 Realign to starting alignment
 
-`mafft --localpair --thread 128 --add data/nr_pass_1/Tc1marPlm/extracted_fastas/cleaned_Tc1marPlm.fasta.cd seq_pass_0/Tc1marPlm.fasta > data/nr_pass_1/Tc1marPlm/extracted_fastas/unclean_Tc1marPlm_aln.fasta`
+`mafft --localpair --thread 128 --add data/nr_pass_1/Tc1marPlm/extracted_fastas/data/nr_pass_1/Tc1marPlm/extracted_fastas/Tc1marPlm.fasta.75.cd seq_pass_0/Tc1marPlm.fasta > data/nr_pass_1/Tc1marPlm/extracted_fastas/unclean_Tc1marPlm_aln.fasta`
 
 Ensure sequences retain DDE motifs
 

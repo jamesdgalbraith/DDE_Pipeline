@@ -58,7 +58,6 @@ with open(args.out_seq, "w") as handle:
 for i in range(len(trimmed_alignment)):
     if i == 0:
         trimmed_alignment_2 = MultipleSeqAlignment([])
-    print(trimmed_alignment[i].name)
     start_gaps = (str(trimmed_alignment[i].seq[0:5]).count('-'))
     end_gaps = (str(trimmed_alignment[i].seq[(len(trimmed_alignment[0])-5):len(trimmed_alignment[0])]).count('-'))
     prop_gaps = (str(trimmed_alignment[i].seq).count('-'))/len(str(trimmed_alignment[i].seq))
