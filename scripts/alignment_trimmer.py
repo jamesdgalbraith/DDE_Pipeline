@@ -58,12 +58,15 @@ with open(args.out_seq, "w") as handle:
 for i in range(len(trimmed_alignment)):
     if i == 0:
         trimmed_alignment_2 = MultipleSeqAlignment([])
-    start_gaps = (str(trimmed_alignment[i].seq[0:5]).count('-'))
-    end_gaps = (str(trimmed_alignment[i].seq[(len(trimmed_alignment[0])-5):len(trimmed_alignment[0])]).count('-'))
+    start_gaps = (str(trimmed_alignment[i].seq[0:10]).count('-'))
+    end_gaps = (str(trimmed_alignment[i].seq[(len(trimmed_alignment[0])-10):len(trimmed_alignment[0])]).count('-'))
     prop_gaps = (str(trimmed_alignment[i].seq).count('-'))/len(str(trimmed_alignment[i].seq))
-    if start_gaps < 5 and end_gaps < 5 and prop_gaps <= 0.5:
+    if start_gaps < 10 and end_gaps < 10 and prop_gaps <= 0.5:
         trimmed_alignment_2.append(SeqRecord(trimmed_alignment[i].seq, name = trimmed_alignment[i].name, id = trimmed_alignment[i].id, description = ""))
 
+index = args.out_seq.rfind('/')
+trimmed_out_seq = args.out_seq[:index] + "/extra_" + args.out_seq[index+1:]
+
 # save alignment
-with open(("extra_"+args.out_seq), "w") as handle:
+with open(trimmed_out_seq, "w") as handle:
     AlignIO.write(trimmed_alignment_2, handle, "fasta")
