@@ -65,5 +65,5 @@ for i in range(len(trimmed_alignment)):
         trimmed_alignment_2.append(SeqRecord(trimmed_alignment[i].seq, name = trimmed_alignment[i].name, id = trimmed_alignment[i].id, description = ""))
 
 # save alignment
-with open((args.out_seq+".extra"), "w") as handle:
+with open(("extra_"+args.out_seq), "w") as handle:
     AlignIO.write(trimmed_alignment_2, handle, "fasta")
