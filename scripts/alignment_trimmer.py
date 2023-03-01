@@ -12,7 +12,7 @@ parser.add_argument('-i', '--in_seq', type=str, required=True,
                     help='Input MSA to be trimmed.')
 parser.add_argument('-o', '--out_seq', type=str, required=True,
                     help='Output path for trimmed MSA')
-parser.add_argument('-t', '--threshold', type=float, default = 0.5,
+parser.add_argument('-t', '--threshold', type=float, default = 0.4,
                     help='Threshold coverage for inclusion')
 args = parser.parse_args()
 
