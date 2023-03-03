@@ -6,13 +6,14 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio.Align import MultipleSeqAlignment
 from collections import defaultdict, Counter
+from re import sub
 import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--in_alignment', type=str, required=True,
-                    help='original_alignment')
-parser.add_argument('-o', '--out alignment', type=str, required=True,
-                    help='original_alignment')
+                    help='Original_alignment')
+parser.add_argument('-o', '--out_alignment', type=str, required=True,
+                    help='Out alignment')
 parser.add_argument('-g', '--gap_proportion', type=float, default=0.1,
                     help='Maximum proportion of sequence ends allowed to be gaps')
 parser.add_argument('-t', '--total_proportion', type=float, default=0.5,
@@ -34,6 +35,7 @@ def end_gap_counter(seq):
 
 # read in alignment and determine no of sequences
 aln_in=AlignIO.read(args.in_alignment, 'fasta')
+print(sub('.*/', '', args.in_alignment))
 aln_len=len(aln_in)
 
 # determine end prop based on args and seq length
@@ -81,14 +83,3 @@ with open(args.out_alignment, 'w') as handle:
       # print(aln_in[line].name, line)
       SeqIO.write(aln_in[line], handle=handle, format="fasta-2line") # append to file if all is good
 print(str(len(AlignIO.read(args.out_alignment, 'fasta')))+' of '+str(aln_len)+' sequences preserved')
-print()
-
-sequence='VVFSDEGKFRFFGIKGCLVRRKPCTALQKEHIVPTVKHGGDGVMMWG----------CMASNDVGKLVPGPDTVDALKL------------------------NEAPRGSRESLQKCVAWRCPDELFWPVDSRDLNFVFH----------'
-
-start_count=0
-for i, aa in enumerate(sequence):
-  if(aa == '-'):
-    start_count+=1
-  else:
-    break
-print(start_count)
